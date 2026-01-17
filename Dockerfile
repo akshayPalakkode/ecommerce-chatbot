@@ -1,4 +1,11 @@
-FROM python:3.9-slim
+FROM dockerhub.paypalcorp.com/python:3.9-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    PIP_TRUSTED_HOST=pypi.org,files.pythonhosted.org \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # Set working directory
 WORKDIR /app
@@ -13,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements-app.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements-app.txt
+RUN pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements-app.txt
 
 # Copy application code
 COPY src/ ./src/
