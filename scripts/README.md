@@ -4,6 +4,40 @@ Utility scripts for managing data and infrastructure.
 
 ## Available Scripts
 
+### `list_kb_versions.py`
+Lists all knowledge base versions in S3.
+
+**Usage:**
+```bash
+python scripts/list_kb_versions.py
+```
+
+**Features:**
+- Shows all timestamped versions
+- Displays document counts
+- Shows creation timestamps
+- Highlights latest version
+- Provides S3 URIs for Bedrock configuration
+
+**Example Output:**
+```
+Found 3 version(s):
+
+Version 1: v_20260117_103042
+  S3 Location: s3://ecom-rag-bucket/knowledge-base/v_20260117_103042/
+  Documents: 93
+  Created: 2026-01-17T10:30:42
+
+Version 2: v_20260117_143521
+  S3 Location: s3://ecom-rag-bucket/knowledge-base/v_20260117_143521/
+  Documents: 94
+  Created: 2026-01-17T14:35:21
+
+LATEST VERSION: v_20260117_143521
+```
+
+---
+
 ### `upload_to_s3.py`
 Original S3 upload script with interactive bucket name input.
 
@@ -25,34 +59,48 @@ python scripts/upload_to_s3.py ecom-rag-bucket
 
 ---
 
-### `upload_kb_to_s3.py`
-Simplified S3 upload script with pre-configured bucket name.
+### `1.5_upload_kb_to_s3.py`
+S3 upload script with automatic versioning.
 
 **Usage:**
 ```bash
-python scripts/upload_kb_to_s3.py
+python scripts/1.5_upload_kb_to_s3.py
 ```
 
 **Features:**
-- Uses hardcoded bucket name: `ecom-rag-bucket`
+- **Automatic versioning** with timestamps (e.g., `v_20260117_103042`)
+- Lists existing versions before upload
+- Creates new version folder - never overwrites existing data
 - Uploads all chunks from `data/knowledge_base_chunks.json`
 - Creates individual .txt files for each chunk
 - Organizes into policies/ and faqs/ folders
 - Generates metadata manifest
 
-**Output:**
+**Output Structure:**
 ```
 s3://ecom-rag-bucket/knowledge-base/
-  ├── policies/
-  │   ├── return_policy_0.txt
-  │   ├── return_policy_1.txt
-  │   └── ...
-  ├── faqs/
-  │   ├── faq_0.txt
-  │   ├── faq_1.txt
-  │   └── ...
-  └── manifest.json
+  ├── v_20260117_103042/    <- Version 1
+  │   ├── policies/
+  │   ├── faqs/
+  │   └── manifest.json
+  └── v_20260117_143521/    <- Version 2 (latest)
+      ├── policies/
+      │   ├── return_policy_0.txt
+      │   ├── return_policy_1.txt
+      │   └── ...
+      ├── faqs/
+      │   ├── faq_0.txt
+      │   ├── faq_1.txt
+      │   └── ...
+      └── manifest.json
 ```
+
+**Benefits:**
+- Version control for knowledge base data
+- Safe rollback to previous versions
+- Compare performance across versions
+- No accidental overwrites
+- Audit trail of changes
 
 ---
 

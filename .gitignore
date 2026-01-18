@@ -70,3 +70,6 @@ venv.bak/
 *.pkl
 *.pickle
 cache/
+
+# Documentation (internal)
+docs/
